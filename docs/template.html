@@ -213,7 +213,7 @@ footer a:hover{text-decoration:underline}
 <script>
 const D = {{DATA_JSON}};
 
-const CHARTS = ["family_final", "family_filing", "employment_final", "employment_filing"];
+const CHARTS = ["family_filing", "family_final", "employment_filing", "employment_final"];
 const SUB = {family_final:"Family · Final Action", family_filing:"Family · Filing",
              employment_final:"Employment · Final Action", employment_filing:"Employment · Filing"};
 const COUNTRIES = Object.keys(D.labels.countries);
@@ -224,7 +224,7 @@ const ym = m => m ? m : "—";
 const monthCn = m => { const [y, mo] = m.split("-"); return `${y} 年 ${+mo} 月`; };
 
 // 状态：URL hash 优先（方便 Wix 里嵌入指定表格，如 #employment_final/CN），其次本机记忆
-let state = {chart: "family_final", country: "CN"};
+let state = {chart: "family_filing", country: "CN"};
 try { Object.assign(state, JSON.parse(localStorage.getItem("vb-state") || "{}")); } catch (e) {}
 function readHash(){
   const [c, k] = location.hash.slice(1).split("/");
@@ -232,7 +232,7 @@ function readHash(){
   if (COUNTRIES.includes(k)) state.country = k;
 }
 readHash();
-if (!CHARTS.includes(state.chart)) state.chart = "family_final";
+if (!CHARTS.includes(state.chart)) state.chart = "family_filing";
 if (!COUNTRIES.includes(state.country)) state.country = "CN";
 window.addEventListener("hashchange", () => { readHash(); render(); });
 

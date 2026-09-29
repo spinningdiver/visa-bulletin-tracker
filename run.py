@@ -11,7 +11,10 @@ from datetime import datetime
 import requests
 
 import build
-from scraper import CHARTS, fetch_bulletin, fetch_uscis_charts
+from scraper import fetch_bulletin, fetch_uscis_charts
+
+# 通知里的顺序，与网页标签一致（scraper.CHARTS 是 PDF 里的顺序，不能动）
+CHARTS = ("family_filing", "family_final", "employment_filing", "employment_final")
 
 try:  # Windows 控制台默认 GBK，会把中文输出成乱码
     sys.stdout.reconfigure(encoding="utf-8")
