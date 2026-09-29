@@ -14,9 +14,8 @@ categories:
   EB4: { code: EB-4, cn: 特殊移民 }
   SR: { code: EB-4 SR, cn: 特定宗教工作者 }
   EB5U: { code: EB-5, cn: 投资移民·非预留 }
-  EB5R: { code: EB-5 乡村, cn: 投资移民·乡村预留（20%） }
-  EB5H: { code: EB-5 高失业, cn: 投资移民·高失业区预留（10%） }
-  EB5I: { code: EB-5 基建, cn: 投资移民·基础设施预留（2%） }
+  # 乡村（20%）、高失业区（10%）、基础设施（2%）三项合并为一行，见 build.py
+  EB5S: { code: EB-5 预留, cn: 投资移民·乡村／高失业区／基础设施预留 }
 
 countries:
   CN: 中国大陆出生

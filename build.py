@@ -72,18 +72,58 @@ def movement(old: str | None, new: str) -> dict:
     return {"kind": "up", "text": f"前进{days}天"} if days > 0 else {"kind": "down", "text": f"倒退{-days}天"}
 
 
+# EB-5 三项预留（乡村／高失业区／基础设施）在网页和通知里合并成一行
+EB5_SET_ASIDE = {"EB5R": "乡村", "EB5H": "高失业", "EB5I": "基建"}
+
+
+def _merge_set_aside(rows: dict) -> dict:
+    """三项取值相同（历来如此，多为 C）时就显示这个值；一旦分化，
+    逐项写明，不让合并掩盖差异。"""
+    keys = [k for k in EB5_SET_ASIDE if k in rows]
+    if not keys:
+        return rows
+    merged = {}
+    for c in rows[keys[0]]:
+        parts = [rows[k][c] for k in keys]
+        olds = {p["old"] for p in parts}
+        news = {p["new"] for p in parts}
+        moves = {p["move"]["text"] for p in parts}
+        if len(olds) == 1 and len(news) == 1:
+            merged[c] = parts[0]
+            continue
+        label = lambda k, v: f"{EB5_SET_ASIDE[k]} {show(v)}"
+        changed = [(k, p["move"]) for k, p in zip(keys, parts) if p["move"]["kind"] in ("up", "down")]
+        kinds = {m["kind"] for _, m in changed}
+        merged[c] = {
+            "old": "／".join(label(k, p["old"]) for k, p in zip(keys, parts)),
+            "new": "／".join(label(k, p["new"]) for k, p in zip(keys, parts)),
+            "move": {"kind": "same", "text": "不变"} if not changed else {
+                "kind": kinds.pop() if len(kinds) == 1 else "down",
+                "text": "、".join(f"{EB5_SET_ASIDE[k]}{m['text']}" for k, m in changed)
+                if len(moves) > 1 else changed[0][1]["text"],
+            },
+        }
+    out = {}
+    for k, v in rows.items():
+        if k == keys[0]:
+            out["EB5S"] = merged
+        elif k not in EB5_SET_ASIDE:
+            out[k] = v
+    return out
+
+
 def compare(prev: dict | None, cur: dict) -> dict:
     """{chart: {row: {country: {"old", "new", "move"}}}}"""
     out = {}
     for chart, rows in cur["charts"].items():
         old_rows = (prev or {}).get("charts", {}).get(chart, {})
-        out[chart] = {
+        out[chart] = _merge_set_aside({
             row: {
                 c: {"old": old_rows.get(row, {}).get(c), "new": v, "move": movement(old_rows.get(row, {}).get(c), v)}
                 for c, v in cells.items()
             }
             for row, cells in rows.items()
-        }
+        })
     return out
 
 

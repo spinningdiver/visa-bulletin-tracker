@@ -42,7 +42,8 @@ def _moves(diff: dict, chart: str, country: str, labels: dict) -> list[str]:
         x = cells.get(country)
         if x and x["move"]["kind"] in ("up", "down"):
             # 新值是 C／U 时，变化文字本身已说明去向，不再接「至 …」
-            to = f"至 {x['new']}" if x["new"] not in build.SHOW else ""
+            # EB-5 预留三项分化时 new 是逐项拼接的长串，变化文字里已点明是哪一项
+            to = f"至 {x['new']}" if x["new"] not in build.SHOW and "／" not in x["new"] else ""
             out.append(f"{cats[row]['code']} {x['move']['text']}{to}")
     return out
 
