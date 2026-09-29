@@ -139,6 +139,12 @@ h1{font-family:var(--serif); font-weight:600; font-size:30px; line-height:1.3; m
 .mv{font-size:14px; font-weight:500; color:var(--muted); white-space:nowrap}
 .mv.up{color:var(--up)} .mv.down{color:var(--down)}
 .mv .arr{font-family:var(--mono); margin-right:3px}
+.tally{
+  display:flex; flex-wrap:wrap; gap:6px 20px; align-items:baseline;
+  padding:11px 18px; border-top:1px solid var(--line); background:var(--surface-2);
+  font-size:13px; color:var(--muted);
+}
+.tally .stat b{font-size:15px}
 
 /* ---------- footer ---------- */
 footer{font-size:12.5px; color:var(--muted); line-height:1.75; padding:0 2px; display:flex; flex-wrap:wrap; gap:4px 16px}
@@ -170,8 +176,6 @@ footer a:hover{text-decoration:underline}
 
   <div class="statbar">
     <span class="stat">最新公告 <b id="s-cur"></b></span>
-    <span class="stat up"><span class="dot"></span><b id="s-up">0</b> 项前进</span>
-    <span class="stat down"><span class="dot"></span><b id="s-down">0</b> 项倒退</span>
     <span class="spacer"></span>
     <span class="checked"><span class="live"></span>最后检查 {{CHECKED}}</span>
   </div>
@@ -190,6 +194,12 @@ footer a:hover{text-decoration:underline}
       <span role="columnheader" class="r">较上月</span>
     </div>
     <div id="rows"></div>
+    <div class="tally">
+      <span id="t-scope"></span>
+      <span class="stat up"><span class="dot"></span><b id="s-up">0</b> 项前进</span>
+      <span class="stat down"><span class="dot"></span><b id="s-down">0</b> 项倒退</span>
+      <span class="stat"><b id="s-same">0</b> 项不变</span>
+    </div>
   </div>
 
   <footer>
@@ -297,6 +307,8 @@ function render(){
   }).join("");
   document.getElementById("s-up").textContent = up;
   document.getElementById("s-down").textContent = down;
+  document.getElementById("s-same").textContent = rows.filter(r => r.cells[state.country].kind === "same").length;
+  document.getElementById("t-scope").textContent = `本表 · ${L.countries[state.country]}：`;
 
   try { localStorage.setItem("vb-state", JSON.stringify(state)); } catch (e) {}
   history.replaceState(null, "", `#${state.chart}/${state.country}`);
