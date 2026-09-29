@@ -17,7 +17,7 @@ BULLETINS = DATA / "bulletins"
 SITE = ROOT / "docs"
 EASTERN = timezone(timedelta(hours=-4))  # 夏令时；仅用于显示
 
-SHOW = {"C": "无排期", "U": "暂停"}
+SHOW = {"C": "C", "U": "U"}  # 照公告原样写，C = Current，U = Unauthorized
 
 
 def load_labels() -> dict:
@@ -54,7 +54,7 @@ def show(v: str | None) -> str:
 def movement(old: str | None, new: str) -> dict:
     """一格的变化。kind 取 up / down / same / none，网页据此着色。
 
-    C（无排期）视为比任何日期都靠前；U（暂停）视为比任何日期都靠后。
+    C（Current）视为比任何日期都靠前；U（Unauthorized）视为比任何日期都靠后。
     """
     if old is None:
         return {"kind": "none", "text": "—"}
@@ -65,9 +65,9 @@ def movement(old: str | None, new: str) -> dict:
     if old == "U":
         return {"kind": "up", "text": "恢复签发"}
     if new == "C":
-        return {"kind": "up", "text": "前进至无排期"}
+        return {"kind": "up", "text": "前进至 C"}
     if old == "C":
-        return {"kind": "down", "text": "由无排期倒退"}
+        return {"kind": "down", "text": "由 C 倒退"}
     days = (date.fromisoformat(new) - date.fromisoformat(old)).days
     return {"kind": "up", "text": f"前进{days}天"} if days > 0 else {"kind": "down", "text": f"倒退{-days}天"}
 

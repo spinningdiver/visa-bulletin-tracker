@@ -38,7 +38,7 @@ def _moves(diff: dict, chart: str, country: str, labels: dict) -> list[str]:
     for row, cells in diff[chart].items():
         x = cells.get(country)
         if x and x["move"]["kind"] in ("up", "down"):
-            # 新值是无排期／暂停时，变化文字本身已说明去向，不再接「至 …」
+            # 新值是 C／U 时，变化文字本身已说明去向，不再接「至 …」
             to = f"至 {x['new']}" if x["new"] not in build.SHOW else ""
             out.append(f"{cats[row]['code']} {x['move']['text']}{to}")
     return out
@@ -80,7 +80,7 @@ def staff_notice(new: dict | None, diff: dict | None, uscis: dict, uscis_months:
         for ym in uscis_months:
             body.append(_uscis_sentence(ym, uscis))
         body.append("")
-        body.append("指定使用递交排期表的月份，若某类别在裁定排期表上显示无排期，或裁定排期表的截止日更晚，当月也可按裁定排期表递交。")
+        body.append("指定使用递交排期表的月份，若某类别在裁定排期表上显示 C，或裁定排期表的截止日更晚，当月也可按裁定排期表递交。")
 
     body += [
         "",

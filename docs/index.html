@@ -136,17 +136,11 @@ h1{font-family:var(--serif); font-weight:600; font-size:30px; line-height:1.3; m
 .old{color:var(--muted)}
 .new{color:var(--ink); font-weight:600}
 .old .k,.new .k{display:none}
-.txt{font-family:var(--sans); letter-spacing:0; font-size:15px}
 .mv{font-size:14px; font-weight:500; color:var(--muted); white-space:nowrap}
 .mv.up{color:var(--up)} .mv.down{color:var(--down)}
 .mv .arr{font-family:var(--mono); margin-right:3px}
 
-/* ---------- legend + footer ---------- */
-.legend{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:16px 18px; box-shadow:var(--shadow)}
-.legend h2{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px; font-weight:500}
-.legend p{margin:0 0 8px; font-size:13px; color:var(--ink-2); max-width:78ch}
-.legend p:last-child{margin-bottom:0}
-.legend b{color:var(--ink); font-weight:500}
+/* ---------- footer ---------- */
 footer{font-size:12.5px; color:var(--muted); line-height:1.75; padding:0 2px; display:flex; flex-wrap:wrap; gap:4px 16px}
 footer a{color:var(--accent); text-decoration:none}
 footer a:hover{text-decoration:underline}
@@ -163,7 +157,6 @@ footer a:hover{text-decoration:underline}
   .mv{grid-column:2; grid-row:2; font-size:13px}
   .old{grid-column:1 / -1; grid-row:3; font-size:12.5px; margin-top:4px}
   .old .k{display:inline; font-family:var(--sans); margin-right:6px}
-  .old.txt{font-size:12.5px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 </style>
@@ -198,13 +191,6 @@ footer a:hover{text-decoration:underline}
     </div>
     <div id="rows"></div>
   </div>
-
-  <section class="legend">
-    <h2>说明</h2>
-    <p><b>裁定排期</b>（Final Action Dates）：优先日早于此日期，才能最终批准绿卡或签发移民签证。<b>递交排期</b>（Dates for Filing）：优先日早于此日期，即可向 NVC 递交材料；在美境内能否据此递交 I-485，每月由 USCIS 另行指定。</p>
-    <p>USCIS 指定使用递交排期表的月份，若某类别在裁定排期表上显示无排期，或裁定排期表的截止日更晚，当月也可按裁定排期表递交 I-485。</p>
-    <p><b>无排期</b>即公告中的 C（Current），所有合格申请人都可推进；<b>暂停</b>即公告中的 U（Unauthorized），当月不签发。「较上月」按日历天数计算。</p>
-  </section>
 
   <footer>
     <span>以美国国务院公告原文为准，本页仅供内部参考</span>
@@ -529,32 +515,32 @@ const D = {
     "key": "F2A",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "CN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "IN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -671,8 +657,8 @@ const D = {
     "key": "EB1",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
@@ -689,14 +675,14 @@ const D = {
       "text": "前进109天"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -706,10 +692,10 @@ const D = {
     "key": "EB2",
     "cells": {
      "ALL": {
-      "old": "无排期",
+      "old": "C",
       "new": "2025-01-01",
       "kind": "down",
-      "text": "由无排期倒退"
+      "text": "由 C 倒退"
      },
      "CN": {
       "old": "2021-09-01",
@@ -718,22 +704,22 @@ const D = {
       "text": "前进30天"
      },
      "IN": {
-      "old": "暂停",
+      "old": "U",
       "new": "2013-11-01",
       "kind": "up",
       "text": "恢复签发"
      },
      "MX": {
-      "old": "无排期",
+      "old": "C",
       "new": "2025-01-01",
       "kind": "down",
-      "text": "由无排期倒退"
+      "text": "由 C 倒退"
      },
      "PH": {
-      "old": "无排期",
+      "old": "C",
       "new": "2025-01-01",
       "kind": "down",
-      "text": "由无排期倒退"
+      "text": "由 C 倒退"
      }
     }
    },
@@ -881,8 +867,8 @@ const D = {
     "key": "EB5U",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
@@ -893,20 +879,20 @@ const D = {
       "text": "不变"
      },
      "IN": {
-      "old": "暂停",
+      "old": "U",
       "new": "2023-12-01",
       "kind": "up",
       "text": "恢复签发"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -916,32 +902,32 @@ const D = {
     "key": "EB5R",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "CN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "IN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -951,32 +937,32 @@ const D = {
     "key": "EB5H",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "CN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "IN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -986,32 +972,32 @@ const D = {
     "key": "EB5I",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "CN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "IN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -1023,8 +1009,8 @@ const D = {
     "key": "EB1",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
@@ -1041,14 +1027,14 @@ const D = {
       "text": "前进213天"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -1058,10 +1044,10 @@ const D = {
     "key": "EB2",
     "cells": {
      "ALL": {
-      "old": "无排期",
+      "old": "C",
       "new": "2026-03-15",
       "kind": "down",
-      "text": "由无排期倒退"
+      "text": "由 C 倒退"
      },
      "CN": {
       "old": "2022-01-01",
@@ -1076,16 +1062,16 @@ const D = {
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
+      "old": "C",
       "new": "2026-03-15",
       "kind": "down",
-      "text": "由无排期倒退"
+      "text": "由 C 倒退"
      },
      "PH": {
-      "old": "无排期",
+      "old": "C",
       "new": "2026-03-15",
       "kind": "down",
-      "text": "由无排期倒退"
+      "text": "由 C 倒退"
      }
     }
    },
@@ -1093,10 +1079,10 @@ const D = {
     "key": "EB3",
     "cells": {
      "ALL": {
-      "old": "无排期",
+      "old": "C",
       "new": "2024-08-01",
       "kind": "down",
-      "text": "由无排期倒退"
+      "text": "由 C 倒退"
      },
      "CN": {
       "old": "2022-01-08",
@@ -1111,10 +1097,10 @@ const D = {
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
+      "old": "C",
       "new": "2024-08-01",
       "kind": "down",
-      "text": "由无排期倒退"
+      "text": "由 C 倒退"
      },
      "PH": {
       "old": "2024-01-01",
@@ -1233,8 +1219,8 @@ const D = {
     "key": "EB5U",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
@@ -1251,14 +1237,14 @@ const D = {
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -1268,32 +1254,32 @@ const D = {
     "key": "EB5R",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "CN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "IN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -1303,32 +1289,32 @@ const D = {
     "key": "EB5H",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "CN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "IN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -1338,32 +1324,32 @@ const D = {
     "key": "EB5I",
     "cells": {
      "ALL": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "CN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "IN": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "MX": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      },
      "PH": {
-      "old": "无排期",
-      "new": "无排期",
+      "old": "C",
+      "new": "C",
       "kind": "same",
       "text": "不变"
      }
@@ -1382,7 +1368,6 @@ const L = D.labels;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ym = m => m ? m : "—";
 const monthCn = m => { const [y, mo] = m.split("-"); return `${y} 年 ${+mo} 月`; };
-const isDate = v => /^\d{4}-\d{2}-\d{2}$/.test(v);
 
 // 状态：URL hash 优先（方便 Wix 里嵌入指定表格，如 #employment_final/CN），其次本机记忆
 let state = {chart: "family_final", country: "CN"};
@@ -1443,8 +1428,7 @@ function uscisLine(){
 }
 
 function cell(v, cls, label){
-  const txt = isDate(v) ? "" : " txt";
-  return `<span class="${cls}${txt}"><span class="k">${label}</span>${esc(v)}</span>`;
+  return `<span class="${cls}"><span class="k">${label}</span>${esc(v)}</span>`;
 }
 
 function render(){
