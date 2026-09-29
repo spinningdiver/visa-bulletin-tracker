@@ -1,0 +1,60 @@
+name: 检查移民排期
+
+# 国务院每月中下旬发布下个月的 Visa Bulletin，日期不固定，所以每天查一次：
+# 新一期 PDF 地址返回 404 就是还没发，花费只是一次请求。
+# 同时查 USCIS 的「本月 I-485 用哪张表」，它通常在公告发布后一周内才更新。
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 22 * * *" # 美东 18:00，当天发布的公告当天就能收到
+
+permissions:
+  contents: write # 提交更新后的数据与网页
+  issues: write # 有新公告时开 Issue，GitHub 会发邮件通知仓库所有者
+
+concurrency:
+  group: bulletin-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: 检查并生成网页
+        id: run
+        # 解析失败或本月公告迟迟取不到时退出码非零：工作流亮红，GitHub 发失败邮件。
+        # continue-on-error 保证即使亮红，已取得的数据仍会提交。
+        continue-on-error: true
+        run: python run.py --ci
+
+      - name: 提交结果
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "chore: 检查 $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: 有更新时开 Issue 通知
+        if: hashFiles('data/changes.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create "排期更新" --color 17557F --force
+          gh issue create \
+            --title "$(head -1 data/changes.md)" \
+            --body-file <(tail -n +2 data/changes.md) \
+            --label "排期更新"
+
+      - name: 检查步骤失败时让工作流亮红
+        if: steps.run.outcome == 'failure'
+        run: exit 1

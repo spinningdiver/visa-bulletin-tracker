@@ -1,0 +1,32 @@
+# 网页上显示的中文名。代码与 PDF 行名的对应关系见 scraper.py。
+# 只改引号里的文字即可，改完推送，下次运行时网页自动更新。
+
+categories:
+  F1: { code: F1, cn: 公民成年未婚子女 }
+  F2A: { code: F2A, cn: 绿卡配偶及未成年子女 }
+  F2B: { code: F2B, cn: 绿卡成年未婚子女 }
+  F3: { code: F3, cn: 公民已婚子女 }
+  F4: { code: F4, cn: 公民兄弟姐妹 }
+  EB1: { code: EB-1, cn: 杰出人才／杰出教授研究员／跨国高管 }
+  EB2: { code: EB-2, cn: 高学历专业人士／特殊能力人才 }
+  EB3: { code: EB-3, cn: 专业人士／技术工人 }
+  EW: { code: EB-3 EW, cn: 其他工人（非技术劳工） }
+  EB4: { code: EB-4, cn: 特殊移民 }
+  SR: { code: EB-4 SR, cn: 特定宗教工作者 }
+  EB5U: { code: EB-5, cn: 投资移民·非预留 }
+  EB5R: { code: EB-5 乡村, cn: 投资移民·乡村预留（20%） }
+  EB5H: { code: EB-5 高失业, cn: 投资移民·高失业区预留（10%） }
+  EB5I: { code: EB-5 基建, cn: 投资移民·基础设施预留（2%） }
+
+countries:
+  CN: 中国大陆出生
+  ALL: 其他国家／地区
+  IN: 印度
+  MX: 墨西哥
+  PH: 菲律宾
+
+charts:
+  family_final: 亲属移民·裁定排期
+  family_filing: 亲属移民·递交排期
+  employment_final: 职业移民·裁定排期
+  employment_filing: 职业移民·递交排期

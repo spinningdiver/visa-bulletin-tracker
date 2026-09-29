@@ -1,0 +1,4 @@
+# 本地是 Windows、CI 是 Linux，统一用 LF 入库，
+# 否则 CI 每天都会因为换行符差异产生无意义的提交
+* text=auto eol=lf
+*.pdf binary

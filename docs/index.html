@@ -1,0 +1,1494 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>移民排期速查</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#F1F3F6; --surface:#FFFFFF; --surface-2:#F7F9FB;
+  --ink:#131A21; --ink-2:#3D4954; --muted:#66727E; --line:#DCE2E8; --line-2:#EAEEF2;
+  --accent:#17557F; --accent-soft:#E3EDF5; --on-accent:#FFFFFF;
+  --warn:#8A5A0B; --warn-soft:#FAF0DC;
+  --down:#9E3527; --down-soft:#FAE7E3;
+  --up:#2C6349; --up-soft:#E4F0EA;
+  --shadow:0 1px 2px rgba(19,26,33,.05), 0 8px 24px -16px rgba(19,26,33,.22);
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Noto Serif SC","Songti SC",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#10141A; --surface:#171C23; --surface-2:#1D242C;
+    --ink:#E5EAF0; --ink-2:#C2CCD6; --muted:#8E9BA8; --line:#2A333D; --line-2:#222A33;
+    --accent:#7FB2D6; --accent-soft:#1B2C39; --on-accent:#0E141A;
+    --warn:#D9A758; --warn-soft:#2E2617;
+    --down:#E28575; --down-soft:#33201C;
+    --up:#6FBF95; --up-soft:#16281F;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#10141A; --surface:#171C23; --surface-2:#1D242C;
+  --ink:#E5EAF0; --ink-2:#C2CCD6; --muted:#8E9BA8; --line:#2A333D; --line-2:#222A33;
+  --accent:#7FB2D6; --accent-soft:#1B2C39; --on-accent:#0E141A;
+  --warn:#D9A758; --warn-soft:#2E2617;
+  --down:#E28575; --down-soft:#33201C;
+  --up:#6FBF95; --up-soft:#16281F;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:15px; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:960px; margin:0 auto; padding:32px 20px 64px; display:flex; flex-direction:column; gap:18px}
+
+/* ---------- header ---------- */
+header{display:flex; flex-direction:column; gap:6px}
+.eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+h1{font-family:var(--serif); font-weight:600; font-size:30px; line-height:1.3; margin:0; letter-spacing:.01em}
+
+.statbar{
+  display:flex; flex-wrap:wrap; gap:8px 22px; align-items:baseline;
+  padding:12px 16px; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; box-shadow:var(--shadow);
+}
+.stat{display:flex; align-items:baseline; gap:7px; font-size:13px; color:var(--muted)}
+.stat b{font-family:var(--mono); font-weight:600; font-size:16px; color:var(--ink); font-variant-numeric:tabular-nums}
+.stat .dot{width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:1px}
+.stat.up b{color:var(--up)} .stat.up .dot{background:var(--up)}
+.stat.down b{color:var(--down)} .stat.down .dot{background:var(--down)}
+.statbar .spacer{flex:1 1 auto}
+.checked{font-size:12.5px; color:var(--muted); font-family:var(--mono); font-variant-numeric:tabular-nums}
+.checked .live{display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--up); margin-right:6px; vertical-align:1px}
+
+/* ---------- controls ---------- */
+.controls{
+  position:sticky; top:0; z-index:20;
+  display:flex; flex-direction:column; gap:10px;
+  padding:10px; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; box-shadow:var(--shadow);
+}
+.tabs{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px}
+.tab{
+  position:relative; text-align:left; cursor:pointer;
+  font-family:var(--sans); padding:9px 12px 8px; border-radius:6px;
+  background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line);
+  display:flex; flex-direction:column; gap:1px; min-width:0;
+}
+.tab:hover{border-color:var(--muted)}
+.tab .t1{font-size:14px; font-weight:500; line-height:1.4}
+.tab .t2{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; opacity:.7}
+.tab[aria-selected="true"]{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+.tab[aria-selected="true"] .t2{opacity:.8}
+.tab:focus-visible,.chip:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.tab .pin{
+  position:absolute; top:7px; right:8px;
+  font-size:10.5px; font-weight:500; line-height:1.5; padding:0 6px; border-radius:999px;
+  background:var(--warn-soft); color:var(--warn); border:1px solid var(--warn);
+}
+.tab[aria-selected="true"] .pin{background:var(--surface); border-color:var(--surface)}
+
+.chips{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.chips .lbl{font-size:12.5px; color:var(--muted); margin-right:2px}
+.chip{
+  font-family:var(--sans); font-size:13px; padding:5px 12px; cursor:pointer;
+  background:transparent; color:var(--ink-2);
+  border:1px solid var(--line); border-radius:999px; white-space:nowrap;
+}
+.chip:hover{border-color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent); font-weight:500}
+
+.uscis{
+  margin:0; font-size:13px; color:var(--ink-2); line-height:1.6;
+  padding:9px 13px; border-radius:6px; background:var(--surface-2);
+  border-left:3px solid var(--line);
+}
+.uscis.yes{border-left-color:var(--warn); background:var(--warn-soft); color:var(--ink)}
+.uscis b{font-weight:600}
+
+/* ---------- table ---------- */
+.list{background:var(--surface); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); overflow:hidden}
+.lhead,.row{
+  display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) 130px;
+  gap:14px; align-items:center;
+}
+.lhead{
+  padding:10px 18px; border-bottom:1px solid var(--line); background:var(--surface-2);
+  font-size:12.5px; color:var(--muted);
+}
+.lhead .cur{color:var(--ink); font-weight:500}
+.lhead .r,.row .mv{text-align:right}
+.row{padding:14px 18px; border-bottom:1px solid var(--line-2)}
+.row:nth-child(even){background:var(--surface-2)}
+.row:last-child{border-bottom:0}
+.cat{min-width:0}
+.code{display:block; font-family:var(--mono); font-weight:600; font-size:16px; color:var(--ink); letter-spacing:-.01em; line-height:1.35}
+.cn{display:block; font-size:12.5px; color:var(--muted); line-height:1.45; margin-top:1px}
+.old,.new{font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:16px; letter-spacing:-.01em}
+.old{color:var(--muted)}
+.new{color:var(--ink); font-weight:600}
+.old .k,.new .k{display:none}
+.txt{font-family:var(--sans); letter-spacing:0; font-size:15px}
+.mv{font-size:14px; font-weight:500; color:var(--muted); white-space:nowrap}
+.mv.up{color:var(--up)} .mv.down{color:var(--down)}
+.mv .arr{font-family:var(--mono); margin-right:3px}
+
+/* ---------- legend + footer ---------- */
+.legend{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:16px 18px; box-shadow:var(--shadow)}
+.legend h2{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px; font-weight:500}
+.legend p{margin:0 0 8px; font-size:13px; color:var(--ink-2); max-width:78ch}
+.legend p:last-child{margin-bottom:0}
+.legend b{color:var(--ink); font-weight:500}
+footer{font-size:12.5px; color:var(--muted); line-height:1.75; padding:0 2px; display:flex; flex-wrap:wrap; gap:4px 16px}
+footer a{color:var(--accent); text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+@media (max-width:720px){
+  .wrap{padding:20px 16px 44px}
+  h1{font-size:24px}
+  .controls{position:static}
+  .tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lhead{display:none}
+  .row{grid-template-columns:minmax(0,1fr) auto; gap:2px 12px; padding:13px 14px}
+  .cat{grid-column:1; grid-row:1 / span 2}
+  .new{grid-column:2; grid-row:1; text-align:right}
+  .mv{grid-column:2; grid-row:2; font-size:13px}
+  .old{grid-column:1 / -1; grid-row:3; font-size:12.5px; margin-top:4px}
+  .old .k{display:inline; font-family:var(--sans); margin-right:6px}
+  .old.txt{font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Visa Bulletin Tracker · 内部参考</div>
+    <h1>移民排期速查</h1>
+  </header>
+
+  <div class="statbar">
+    <span class="stat">最新公告 <b id="s-cur"></b></span>
+    <span class="stat up"><span class="dot"></span><b id="s-up">0</b> 项前进</span>
+    <span class="stat down"><span class="dot"></span><b id="s-down">0</b> 项倒退</span>
+    <span class="spacer"></span>
+    <span class="checked"><span class="live"></span>最后检查 2026-09-29 15:56 ET</span>
+  </div>
+
+  <div class="controls">
+    <div class="tabs" role="tablist" aria-label="排期表" id="tabs"></div>
+    <div class="chips" role="group" aria-label="出生国家／地区" id="chips"><span class="lbl">出生地</span></div>
+    <p class="uscis" id="uscis"></p>
+  </div>
+
+  <div class="list" role="table" aria-live="polite">
+    <div class="lhead" role="row">
+      <span role="columnheader">类别</span>
+      <span role="columnheader" id="h-old"></span>
+      <span role="columnheader" class="cur" id="h-new"></span>
+      <span role="columnheader" class="r">较上月</span>
+    </div>
+    <div id="rows"></div>
+  </div>
+
+  <section class="legend">
+    <h2>说明</h2>
+    <p><b>裁定排期</b>（Final Action Dates）：优先日早于此日期，才能最终批准绿卡或签发移民签证。<b>递交排期</b>（Dates for Filing）：优先日早于此日期，即可向 NVC 递交材料；在美境内能否据此递交 I-485，每月由 USCIS 另行指定。</p>
+    <p>USCIS 指定使用递交排期表的月份，若某类别在裁定排期表上显示无排期，或裁定排期表的截止日更晚，当月也可按裁定排期表递交 I-485。</p>
+    <p><b>无排期</b>即公告中的 C（Current），所有合格申请人都可推进；<b>暂停</b>即公告中的 U（Unauthorized），当月不签发。「较上月」按日历天数计算。</p>
+  </section>
+
+  <footer>
+    <span>以美国国务院公告原文为准，本页仅供内部参考</span>
+    <a id="src-page" target="_blank" rel="noopener">公告原文 ↗</a>
+    <a id="src-pdf" target="_blank" rel="noopener">PDF ↗</a>
+    <a href="https://www.uscis.gov/visabulletininfo" target="_blank" rel="noopener">USCIS 用表说明 ↗</a>
+  </footer>
+</div>
+
+<script>
+const D = {
+ "cur": {
+  "month": "2026-10",
+  "pdf": "https://travel.state.gov/content/dam/visas/Bulletins/visabulletin_October2026.pdf",
+  "page": "https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/2027/visa-bulletin-for-october-2026.html"
+ },
+ "prev": {
+  "month": "2026-09"
+ },
+ "uscis": {
+  "2026-10": {
+   "family": "filing",
+   "employment": "filing"
+  },
+  "2026-09": {
+   "family": "filing",
+   "employment": "final"
+  }
+ },
+ "labels": {
+  "categories": {
+   "F1": {
+    "code": "F1",
+    "cn": "公民成年未婚子女"
+   },
+   "F2A": {
+    "code": "F2A",
+    "cn": "绿卡配偶及未成年子女"
+   },
+   "F2B": {
+    "code": "F2B",
+    "cn": "绿卡成年未婚子女"
+   },
+   "F3": {
+    "code": "F3",
+    "cn": "公民已婚子女"
+   },
+   "F4": {
+    "code": "F4",
+    "cn": "公民兄弟姐妹"
+   },
+   "EB1": {
+    "code": "EB-1",
+    "cn": "杰出人才／杰出教授研究员／跨国高管"
+   },
+   "EB2": {
+    "code": "EB-2",
+    "cn": "高学历专业人士／特殊能力人才"
+   },
+   "EB3": {
+    "code": "EB-3",
+    "cn": "专业人士／技术工人"
+   },
+   "EW": {
+    "code": "EB-3 EW",
+    "cn": "其他工人（非技术劳工）"
+   },
+   "EB4": {
+    "code": "EB-4",
+    "cn": "特殊移民"
+   },
+   "SR": {
+    "code": "EB-4 SR",
+    "cn": "特定宗教工作者"
+   },
+   "EB5U": {
+    "code": "EB-5",
+    "cn": "投资移民·非预留"
+   },
+   "EB5R": {
+    "code": "EB-5 乡村",
+    "cn": "投资移民·乡村预留（20%）"
+   },
+   "EB5H": {
+    "code": "EB-5 高失业",
+    "cn": "投资移民·高失业区预留（10%）"
+   },
+   "EB5I": {
+    "code": "EB-5 基建",
+    "cn": "投资移民·基础设施预留（2%）"
+   }
+  },
+  "countries": {
+   "CN": "中国大陆出生",
+   "ALL": "其他国家／地区",
+   "IN": "印度",
+   "MX": "墨西哥",
+   "PH": "菲律宾"
+  },
+  "charts": {
+   "family_final": "亲属移民·裁定排期",
+   "family_filing": "亲属移民·递交排期",
+   "employment_final": "职业移民·裁定排期",
+   "employment_filing": "职业移民·递交排期"
+  }
+ },
+ "charts": {
+  "family_final": [
+   {
+    "key": "F1",
+    "cells": {
+     "ALL": {
+      "old": "2020-01-22",
+      "new": "2020-01-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2020-01-22",
+      "new": "2020-01-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2020-01-22",
+      "new": "2020-01-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2008-01-01",
+      "new": "2008-09-08",
+      "kind": "up",
+      "text": "前进251天"
+     },
+     "PH": {
+      "old": "2013-05-01",
+      "new": "2013-11-01",
+      "kind": "up",
+      "text": "前进184天"
+     }
+    }
+   },
+   {
+    "key": "F2A",
+    "cells": {
+     "ALL": {
+      "old": "2026-08-22",
+      "new": "2026-09-22",
+      "kind": "up",
+      "text": "前进31天"
+     },
+     "CN": {
+      "old": "2026-08-22",
+      "new": "2026-09-22",
+      "kind": "up",
+      "text": "前进31天"
+     },
+     "IN": {
+      "old": "2026-08-22",
+      "new": "2026-09-22",
+      "kind": "up",
+      "text": "前进31天"
+     },
+     "MX": {
+      "old": "2025-08-22",
+      "new": "2026-03-22",
+      "kind": "up",
+      "text": "前进212天"
+     },
+     "PH": {
+      "old": "2026-08-22",
+      "new": "2026-09-22",
+      "kind": "up",
+      "text": "前进31天"
+     }
+    }
+   },
+   {
+    "key": "F2B",
+    "cells": {
+     "ALL": {
+      "old": "2019-08-22",
+      "new": "2019-08-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2019-08-22",
+      "new": "2019-08-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2019-08-22",
+      "new": "2019-08-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2009-02-15",
+      "new": "2010-05-15",
+      "kind": "up",
+      "text": "前进454天"
+     },
+     "PH": {
+      "old": "2013-06-01",
+      "new": "2013-10-01",
+      "kind": "up",
+      "text": "前进122天"
+     }
+    }
+   },
+   {
+    "key": "F3",
+    "cells": {
+     "ALL": {
+      "old": "2014-10-22",
+      "new": "2014-10-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2014-10-22",
+      "new": "2014-10-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2014-10-22",
+      "new": "2014-10-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2001-07-01",
+      "new": "2001-07-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "2006-02-22",
+      "new": "2006-07-22",
+      "kind": "up",
+      "text": "前进150天"
+     }
+    }
+   },
+   {
+    "key": "F4",
+    "cells": {
+     "ALL": {
+      "old": "2011-10-22",
+      "new": "2011-10-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2011-10-22",
+      "new": "2011-10-22",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2006-11-01",
+      "new": "2006-12-15",
+      "kind": "up",
+      "text": "前进44天"
+     },
+     "MX": {
+      "old": "2001-04-08",
+      "new": "2001-04-22",
+      "kind": "up",
+      "text": "前进14天"
+     },
+     "PH": {
+      "old": "2007-08-22",
+      "new": "2008-05-15",
+      "kind": "up",
+      "text": "前进267天"
+     }
+    }
+   }
+  ],
+  "family_filing": [
+   {
+    "key": "F1",
+    "cells": {
+     "ALL": {
+      "old": "2020-02-01",
+      "new": "2020-02-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2020-02-01",
+      "new": "2020-02-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2020-02-01",
+      "new": "2020-02-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2008-12-01",
+      "new": "2008-12-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "2015-04-22",
+      "new": "2015-04-22",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "F2A",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "F2B",
+    "cells": {
+     "ALL": {
+      "old": "2019-09-01",
+      "new": "2019-09-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2019-09-01",
+      "new": "2019-09-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2019-09-01",
+      "new": "2019-09-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2010-05-15",
+      "new": "2011-03-22",
+      "kind": "up",
+      "text": "前进311天"
+     },
+     "PH": {
+      "old": "2013-10-01",
+      "new": "2014-10-01",
+      "kind": "up",
+      "text": "前进365天"
+     }
+    }
+   },
+   {
+    "key": "F3",
+    "cells": {
+     "ALL": {
+      "old": "2014-11-01",
+      "new": "2014-11-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2014-11-01",
+      "new": "2014-11-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2014-11-01",
+      "new": "2014-11-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2001-07-15",
+      "new": "2002-12-01",
+      "kind": "up",
+      "text": "前进504天"
+     },
+     "PH": {
+      "old": "2006-08-08",
+      "new": "2006-10-22",
+      "kind": "up",
+      "text": "前进75天"
+     }
+    }
+   },
+   {
+    "key": "F4",
+    "cells": {
+     "ALL": {
+      "old": "2011-11-01",
+      "new": "2011-11-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2011-11-01",
+      "new": "2011-11-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2006-12-15",
+      "new": "2007-02-01",
+      "kind": "up",
+      "text": "前进48天"
+     },
+     "MX": {
+      "old": "2001-04-30",
+      "new": "2001-04-30",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "2008-03-22",
+      "new": "2009-03-22",
+      "kind": "up",
+      "text": "前进365天"
+     }
+    }
+   }
+  ],
+  "employment_final": [
+   {
+    "key": "EB1",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2023-07-01",
+      "new": "2023-07-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2022-10-15",
+      "new": "2023-02-01",
+      "kind": "up",
+      "text": "前进109天"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EB2",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "2025-01-01",
+      "kind": "down",
+      "text": "由无排期倒退"
+     },
+     "CN": {
+      "old": "2021-09-01",
+      "new": "2021-10-01",
+      "kind": "up",
+      "text": "前进30天"
+     },
+     "IN": {
+      "old": "暂停",
+      "new": "2013-11-01",
+      "kind": "up",
+      "text": "恢复签发"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "2025-01-01",
+      "kind": "down",
+      "text": "由无排期倒退"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "2025-01-01",
+      "kind": "down",
+      "text": "由无排期倒退"
+     }
+    }
+   },
+   {
+    "key": "EB3",
+    "cells": {
+     "ALL": {
+      "old": "2024-09-01",
+      "new": "2024-05-15",
+      "kind": "down",
+      "text": "倒退109天"
+     },
+     "CN": {
+      "old": "2022-01-01",
+      "new": "2022-01-08",
+      "kind": "up",
+      "text": "前进7天"
+     },
+     "IN": {
+      "old": "2014-01-01",
+      "new": "2014-01-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2024-09-01",
+      "new": "2024-05-15",
+      "kind": "down",
+      "text": "倒退109天"
+     },
+     "PH": {
+      "old": "2023-08-01",
+      "new": "2023-08-15",
+      "kind": "up",
+      "text": "前进14天"
+     }
+    }
+   },
+   {
+    "key": "EW",
+    "cells": {
+     "ALL": {
+      "old": "2022-04-01",
+      "new": "2022-01-01",
+      "kind": "down",
+      "text": "倒退90天"
+     },
+     "CN": {
+      "old": "2019-05-01",
+      "new": "2019-10-01",
+      "kind": "up",
+      "text": "前进153天"
+     },
+     "IN": {
+      "old": "2014-01-01",
+      "new": "2014-01-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2022-04-01",
+      "new": "2022-01-01",
+      "kind": "down",
+      "text": "倒退90天"
+     },
+     "PH": {
+      "old": "2021-12-01",
+      "new": "2022-01-01",
+      "kind": "up",
+      "text": "前进31天"
+     }
+    }
+   },
+   {
+    "key": "EB4",
+    "cells": {
+     "ALL": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "SR",
+    "cells": {
+     "ALL": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "2022-12-15",
+      "new": "2022-12-15",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EB5U",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2016-12-01",
+      "new": "2016-12-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "暂停",
+      "new": "2023-12-01",
+      "kind": "up",
+      "text": "恢复签发"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EB5R",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EB5H",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EB5I",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   }
+  ],
+  "employment_filing": [
+   {
+    "key": "EB1",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2023-12-01",
+      "new": "2024-07-01",
+      "kind": "up",
+      "text": "前进213天"
+     },
+     "IN": {
+      "old": "2023-12-01",
+      "new": "2024-07-01",
+      "kind": "up",
+      "text": "前进213天"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EB2",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "2026-03-15",
+      "kind": "down",
+      "text": "由无排期倒退"
+     },
+     "CN": {
+      "old": "2022-01-01",
+      "new": "2023-01-01",
+      "kind": "up",
+      "text": "前进365天"
+     },
+     "IN": {
+      "old": "2015-01-15",
+      "new": "2015-01-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "2026-03-15",
+      "kind": "down",
+      "text": "由无排期倒退"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "2026-03-15",
+      "kind": "down",
+      "text": "由无排期倒退"
+     }
+    }
+   },
+   {
+    "key": "EB3",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "2024-08-01",
+      "kind": "down",
+      "text": "由无排期倒退"
+     },
+     "CN": {
+      "old": "2022-01-08",
+      "new": "2024-04-01",
+      "kind": "up",
+      "text": "前进814天"
+     },
+     "IN": {
+      "old": "2015-01-15",
+      "new": "2015-01-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "2024-08-01",
+      "kind": "down",
+      "text": "由无排期倒退"
+     },
+     "PH": {
+      "old": "2024-01-01",
+      "new": "2024-01-01",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EW",
+    "cells": {
+     "ALL": {
+      "old": "2022-08-01",
+      "new": "2022-06-01",
+      "kind": "down",
+      "text": "倒退61天"
+     },
+     "CN": {
+      "old": "2019-10-01",
+      "new": "2020-10-01",
+      "kind": "up",
+      "text": "前进366天"
+     },
+     "IN": {
+      "old": "2015-01-15",
+      "new": "2015-01-15",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "2022-08-01",
+      "new": "2022-06-01",
+      "kind": "down",
+      "text": "倒退61天"
+     },
+     "PH": {
+      "old": "2022-08-01",
+      "new": "2022-06-01",
+      "kind": "down",
+      "text": "倒退61天"
+     }
+    }
+   },
+   {
+    "key": "EB4",
+    "cells": {
+     "ALL": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     },
+     "CN": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     },
+     "IN": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     },
+     "MX": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     },
+     "PH": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     }
+    }
+   },
+   {
+    "key": "SR",
+    "cells": {
+     "ALL": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     },
+     "CN": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     },
+     "IN": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     },
+     "MX": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     },
+     "PH": {
+      "old": "2023-01-01",
+      "new": "2025-01-01",
+      "kind": "up",
+      "text": "前进731天"
+     }
+    }
+   },
+   {
+    "key": "EB5U",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "2017-03-01",
+      "new": "2021-03-01",
+      "kind": "up",
+      "text": "前进1461天"
+     },
+     "IN": {
+      "old": "2024-05-01",
+      "new": "2024-05-01",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EB5R",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EB5H",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   },
+   {
+    "key": "EB5I",
+    "cells": {
+     "ALL": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "CN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "IN": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "MX": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     },
+     "PH": {
+      "old": "无排期",
+      "new": "无排期",
+      "kind": "same",
+      "text": "不变"
+     }
+    }
+   }
+  ]
+ }
+};
+
+const CHARTS = ["family_final", "family_filing", "employment_final", "employment_filing"];
+const SUB = {family_final:"Family · Final Action", family_filing:"Family · Filing",
+             employment_final:"Employment · Final Action", employment_filing:"Employment · Filing"};
+const COUNTRIES = Object.keys(D.labels.countries);
+const L = D.labels;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ym = m => m ? m : "—";
+const monthCn = m => { const [y, mo] = m.split("-"); return `${y} 年 ${+mo} 月`; };
+const isDate = v => /^\d{4}-\d{2}-\d{2}$/.test(v);
+
+// 状态：URL hash 优先（方便 Wix 里嵌入指定表格，如 #employment_final/CN），其次本机记忆
+let state = {chart: "family_final", country: "CN"};
+try { Object.assign(state, JSON.parse(localStorage.getItem("vb-state") || "{}")); } catch (e) {}
+function readHash(){
+  const [c, k] = location.hash.slice(1).split("/");
+  if (CHARTS.includes(c)) state.chart = c;
+  if (COUNTRIES.includes(k)) state.country = k;
+}
+readHash();
+if (!CHARTS.includes(state.chart)) state.chart = "family_final";
+if (!COUNTRIES.includes(state.country)) state.country = "CN";
+window.addEventListener("hashchange", () => { readHash(); render(); });
+
+// USCIS 指定：chart 名末段 final / filing 与指定值相同即为 I-485 适用表
+const curUscis = D.uscis[D.cur.month] || {};
+const designated = chart => {
+  const [kind, which] = chart.split("_");
+  return curUscis[kind] === which;
+};
+
+document.getElementById("s-cur").textContent = monthCn(D.cur.month);
+document.getElementById("h-old").textContent = D.prev ? `${D.prev.month} 截止日` : "上月";
+document.getElementById("h-new").textContent = `${D.cur.month} 截止日`;
+document.getElementById("src-page").href = D.cur.page;
+document.getElementById("src-pdf").href = D.cur.pdf;
+
+const tabsEl = document.getElementById("tabs");
+tabsEl.innerHTML = CHARTS.map(c => `
+  <button class="tab" role="tab" data-c="${c}" aria-selected="false">
+    ${designated(c) ? '<span class="pin" title="USCIS 指定本月递交 I-485 使用此表">485 用表</span>' : ""}
+    <span class="t1">${esc(L.charts[c])}</span>
+    <span class="t2">${SUB[c]}</span>
+  </button>`).join("");
+
+const chipsEl = document.getElementById("chips");
+chipsEl.insertAdjacentHTML("beforeend", COUNTRIES.map(c =>
+  `<button class="chip" data-k="${c}" aria-pressed="false">${esc(L.countries[c])}</button>`).join(""));
+
+function uscisLine(){
+  const [kind, which] = state.chart.split("_");
+  const kindCn = kind === "family" ? "亲属类" : "职业类";
+  const pick = curUscis[kind];
+  const el = document.getElementById("uscis");
+  if (!pick){
+    el.className = "uscis";
+    el.innerHTML = `USCIS 尚未公布 ${monthCn(D.cur.month)}在境内递交 I-485 应使用哪张表，一般在排期发布后一周内公布。`;
+    return;
+  }
+  const other = pick === "final" ? "裁定排期表" : "递交排期表";
+  if (pick === which){
+    el.className = "uscis yes";
+    el.innerHTML = `USCIS 规定 ${monthCn(D.cur.month)}在境内递交 I-485，${kindCn}<b>使用本表</b>。`;
+  } else {
+    el.className = "uscis";
+    el.innerHTML = `USCIS 规定 ${monthCn(D.cur.month)}在境内递交 I-485，${kindCn}使用${other}，不是本表。`;
+  }
+}
+
+function cell(v, cls, label){
+  const txt = isDate(v) ? "" : " txt";
+  return `<span class="${cls}${txt}"><span class="k">${label}</span>${esc(v)}</span>`;
+}
+
+function render(){
+  tabsEl.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.c === state.chart)));
+  chipsEl.querySelectorAll(".chip").forEach(t => t.setAttribute("aria-pressed", String(t.dataset.k === state.country)));
+  uscisLine();
+
+  const rows = D.charts[state.chart];
+  let up = 0, down = 0;
+  document.getElementById("rows").innerHTML = rows.map(r => {
+    const x = r.cells[state.country];
+    const cat = L.categories[r.key];
+    if (x.kind === "up") up++;
+    if (x.kind === "down") down++;
+    const arr = x.kind === "up" ? "↑" : x.kind === "down" ? "↓" : "";
+    return `<div class="row" role="row">
+      <span class="cat" role="cell"><span class="code">${esc(cat.code)}</span><span class="cn">${esc(cat.cn)}</span></span>
+      ${cell(x.old, "old", "上月")}
+      ${cell(x.new, "new", "")}
+      <span class="mv ${x.kind}" role="cell">${arr ? `<span class="arr">${arr}</span>` : ""}${esc(x.text)}</span>
+    </div>`;
+  }).join("");
+  document.getElementById("s-up").textContent = up;
+  document.getElementById("s-down").textContent = down;
+
+  try { localStorage.setItem("vb-state", JSON.stringify(state)); } catch (e) {}
+  history.replaceState(null, "", `#${state.chart}/${state.country}`);
+}
+
+tabsEl.addEventListener("click", e => {
+  const t = e.target.closest(".tab"); if (!t) return;
+  state.chart = t.dataset.c; render();
+});
+tabsEl.addEventListener("keydown", e => {
+  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  const i = CHARTS.indexOf(state.chart) + (e.key === "ArrowRight" ? 1 : -1);
+  state.chart = CHARTS[(i + CHARTS.length) % CHARTS.length]; render();
+  tabsEl.querySelector(`[data-c="${state.chart}"]`).focus();
+});
+chipsEl.addEventListener("click", e => {
+  const c = e.target.closest(".chip"); if (!c) return;
+  state.country = c.dataset.k; render();
+});
+render();
+</script>
+</body>
+</html>

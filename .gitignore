@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# 通知正文为单次运行的临时产物，由 CI 读取后丢弃
+data/changes.md
+
+# 项目说明仅供自己参考，不放进公开库
+README.md
