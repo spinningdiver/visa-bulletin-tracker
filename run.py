@@ -11,7 +11,7 @@ from datetime import datetime
 import requests
 
 import build
-from scraper import fetch_bulletin, fetch_uscis_charts
+from scraper import TemporarilyUnavailable, fetch_bulletin, fetch_uscis_charts
 
 # 通知里的顺序，与网页标签一致（scraper.CHARTS 是 PDF 里的顺序，不能动）
 CHARTS = ("family_filing", "family_final", "employment_filing", "employment_final")
@@ -164,7 +164,13 @@ def main() -> int:
     new_bulletins = []
     while ym <= add_month(this_month, 1):
         print(f"查询 {ym} 公告 … ", end="", flush=True)
-        b = fetch_bulletin(ym, session)  # 解析失败直接抛异常，让 CI 亮红，不发布错数据
+        try:
+            b = fetch_bulletin(ym, session)  # 解析失败直接抛异常，让 CI 亮红，不发布错数据
+        except TemporarilyUnavailable as exc:
+            # 不亮红：一天查四次，下一轮自然重试。长期访问不到时，
+            # 末尾「到了本月仍无本月公告」的检查会兜底告警
+            print(f"暂时访问不到（{exc}），下一轮再试")
+            break
         if b is None:
             print("尚未发布")
             break

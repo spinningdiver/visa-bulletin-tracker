@@ -153,12 +153,24 @@ def month_urls(ym: str) -> tuple[str, str]:
     )
 
 
+class TemporarilyUnavailable(Exception):
+    """这一轮查不了，下一轮再试。与解析失败区分开：后者说明 PDF 结构变了，需要人处理。"""
+
+
 def fetch_bulletin(ym: str, session: requests.Session) -> dict | None:
-    """取某月公告。尚未发布返回 None；其他失败抛异常。"""
+    """取某月公告。尚未发布返回 None；暂时访问不到抛 TemporarilyUnavailable；
+    其他失败（含解析失败）抛普通异常。"""
     pdf_url, page_url = month_urls(ym)
-    resp = session.get(pdf_url, headers={"User-Agent": UA}, timeout=60)
+    try:
+        resp = session.get(pdf_url, headers={"User-Agent": UA}, timeout=60)
+    except (requests.ConnectionError, requests.Timeout) as exc:
+        raise TemporarilyUnavailable(f"{type(exc).__name__}: {exc}") from exc
     if resp.status_code == 404:
         return None
+    # 2026-11-01、11-02 两天，尚未发布的 12 月 PDF 对 GitHub 服务器返回 403 而不是 404，
+    # 次日自行恢复 —— 多半是 Cloudflare 临时拦截了数据中心 IP。限流与服务器错误同理
+    if resp.status_code in (403, 429) or resp.status_code >= 500:
+        raise TemporarilyUnavailable(f"HTTP {resp.status_code}")
     resp.raise_for_status()
     if not resp.content.startswith(b"%PDF"):
         raise ValueError(f"{pdf_url} 返回的不是 PDF")
